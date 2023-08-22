@@ -75,12 +75,18 @@ const actions = {
             form.append('start_date', project.start_date);
             form.append('end_date', project.end_date);
             project = form;
+
+            // var config = {
+            //     headers: { 'Content-Type': 'multipart/form-data' }
+            // }
           }
-          return axiosClient.post('/project', project)
-        //   .then((res)=> {
-        //     commit('setProject')
-        //     return res.data
-        //   })
+          return axiosClient.post('/project', project, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+        })
+          .then((res)=> {
+            commit('setProject')
+            return res.data
+          })
     },
     addNote ({commit}, payload) {
        commit('ADD_NOTE', payload);

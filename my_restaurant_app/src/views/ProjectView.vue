@@ -72,13 +72,17 @@ const error = ref('')
 const loading = ref(false)
 
 const project = reactive({
-    user_id: 0,
+    user_id: null,
     project_name: '',
     description: '',
     start_date: '',
     end_date: '',
-    image: ''
+    image: null
 })
+
+// function onImageChoose(ev) {
+//     project.image.file = ev.target.file;
+// }
 
 function onImageChoose(ev) {
     const file = ev.target.files[0];

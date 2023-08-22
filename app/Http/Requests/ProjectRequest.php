@@ -28,8 +28,8 @@ class ProjectRequest extends FormRequest
             'project_name' => ['required', 'max:255'],
             'description' => ['required'],
             'start_date' => ['required', 'date'],
-            'end_date' => ['required', 'date'],
-            'image' => ['string']
+            'end_date' => ['required', 'date', 'after:start_date'],
+            'image' => ['required', 'string']
         ];
     }
 }

@@ -63,7 +63,6 @@ import store from "@/stores/store";
 import {useToast} from 'vue-toast-notification';
 
 const $toast = useToast();
-
 const router = useRouter()
 const loading = ref(false);
 const errorMsg = ref('');

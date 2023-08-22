@@ -1,7 +1,9 @@
 
 import axios from "axios";
 import store from "@/stores/store";
-// import router from "./router/index.js";
+import { useRouter } from "vue-router";
+
+const router = useRouter()
 
 const axiosClient = axios.create({
   baseURL: `http://localhost:8000/api`
@@ -9,17 +11,21 @@ const axiosClient = axios.create({
 
 axiosClient.interceptors.request.use(config => {
   config.headers.Authorization = `Bearer ${store.state.user.token}`
+//   if (config.headers['Content-Type'] === 'multipart/form-data') {
+//     config.headers['Content-Type'] = undefined;
+//   }
   return config;
 })
-//
-// axiosClient.interceptors.response.use(response => {
-//   return response;
-// }, error => {
-//   if (error.response.status === 401) {
-//     store.commit('setToken', null)
-//     router.push({name: 'login'})
-//   }
-//   throw error;
-// })
+axiosClient.interceptors.response.use(response => {
+    return response;
+},
+error => {
+    if (error.response.status === 401) {
+      store.commit('setToken', null)
+      router.push({name: 'login'})
+    }
+    throw error;
+  }
+)
 
 export default axiosClient;

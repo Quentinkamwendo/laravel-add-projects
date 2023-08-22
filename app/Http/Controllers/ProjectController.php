@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use App\Http\Requests\ProjectRequest;
 use App\Http\Resources\ProjectResource;
+use Illuminate\Support\Facades\Storage;
 
 class ProjectController extends Controller
 {
@@ -18,7 +19,9 @@ class ProjectController extends Controller
 
     public function index()
     {
+        $paginatedData = Project::paginate(3);
         return ProjectResource::collection(
+            $paginatedData,
             Project::where('user_id', Auth::user()->id)->get()
         );
     }
@@ -32,35 +35,26 @@ class ProjectController extends Controller
     public function store(ProjectRequest $request)
     {
         $formFields = $request->validated($request->all());
-        // $formFields = ([
-        //     'user_id' => Auth::user()->id,
-        //     'project_name' => $request->project_name,
-        //     'description' => $request->description,
-        //     'start_date' => $request->start_date,
-        //     'end_date' => $request->end_date
-        // ]);
-        // $project = new Project;
-        // $project->user_id = Auth::user()->id;
-        // $project->project_name = $request->project_name;
-        // $project->description = $request->description;
-        // $project->start_date = $request->start_date;
-        // $project->end_date = $request->end_date;
 
-        // if ($request->hasFile('image')) {
-        //     $image = $request->file('image');
-        //     $path = $image->store('project_images', "public");
-        //     $project->image = $path;
+        // if(isset($formFields['image'])) {
+        //     // $formFields['image'] = $request->file('image')->store('images', 'public');
+        //     $relativePath = $this->saveImage($formFields['image']);
+        //     $formFields['image'] = $relativePath;
         // }
-        // $project->save();
-        // return response()->json($project, 201);
+        // $imagePath = $request->file('image')->store('project_images', 'public');
+        $imageData = base64_decode($request->input('image'));
+        $imageName = uniqid().'.png';
+        file_put_contents(storage_path('app/public/'.$imageName), $imageData);
 
-        if(isset($formFields['image'])) {
-            // $formFields['image'] = $request->file('image')->store('images', 'public');
-            $relativePath = $this->saveImage($formFields['image']);
-            $formFields['image'] = $relativePath;
-        }
 
-        $project = Project::create($formFields);
+        $project = Project::create([
+            'user_id' => Auth::user()->id,
+            'project_name' => $request->input('project_name'),
+            'description' => $request->input("description"),
+            'start_date' => $request->input('start_date'),
+            'end_date' => $request->input('end_date'),
+            'image' => $imageName,
+        ]);
          return new ProjectResource($project);
 
     }
